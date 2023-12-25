@@ -1,8 +1,15 @@
 import db from "../../config/database/index.js";
 import { Sequelize } from "sequelize";
 import moment from "moment-timezone";
+import img from "./foto.js";
 
 const auth = db.define("auth", {
+    id: {
+        type : Sequelize.INTEGER,
+        allowNull : false,
+        autoIncrement : true,
+        primaryKey : true
+    },
     idUser : {
         type : Sequelize.STRING,
         allowNull : false,
@@ -13,6 +20,10 @@ const auth = db.define("auth", {
     },
     email: {
         type : Sequelize.STRING,
+        allowNull : false
+    },
+    imgId: {
+        type : Sequelize.INTEGER,
         allowNull : false
     },
     password : {
@@ -33,5 +44,6 @@ auth.sync().then(()=>{
     console.log("auth table created")
 })
 
+auth.belongsTo(img)
 
 export default auth;
