@@ -1,4 +1,5 @@
 import { findUser, registerAccount } from "../../function/auths.js";
+import img from "../../model/table/foto.js";
 
  const login = async (req,res) => {
     // Logic for handling login request
@@ -7,7 +8,8 @@ import { findUser, registerAccount } from "../../function/auths.js";
     if(!user){
         return res.status(400).json({message:"Username or password is wrong"})
     }
-    return res.status(200).json({message:"Login successful"})
+
+    return res.status(200).json({message:"Login successful", data : user})
 };
 
  const register = async(req, res) => {
