@@ -44,6 +44,5 @@ auth.sync().then(()=>{
     console.log("auth table created")
 })
 
-auth.belongsTo(img)
 
 export default auth;

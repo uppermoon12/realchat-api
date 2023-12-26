@@ -1,4 +1,5 @@
 import { findUser, registerAccount } from "../../function/auths.js";
+import token from "../../middleware/indexx.js";
 import img from "../../model/table/foto.js";
 
  const login = async (req,res) => {
@@ -8,8 +9,15 @@ import img from "../../model/table/foto.js";
     if(!user){
         return res.status(400).json({message:"Username or password is wrong"})
     }
-
-    return res.status(200).json({message:"Login successful", data : user})
+    const token = jwt.sign({username : user.username}, process.env.SECRET_KEY, {expiresIn : "30d"})
+    return res.cookie("token", token,{
+        httpOnly : true,
+        secure : true,
+        sameSite : "none",
+        maxAge : 1000 * 60 * 60 * 24 * 30
+    })
+    .res.status(200)
+    .json({message:"Login successful", data : user})
 };
 
  const register = async(req, res) => {
@@ -23,7 +31,9 @@ import img from "../../model/table/foto.js";
 };
 
  const logout = (req, res) => {
-    // Logic for handling logout request
+    return res.clearCookie("token")
+    .status(200)
+    .json({message:"Logout successful"})
 };
 
 export { login, register, logout };
