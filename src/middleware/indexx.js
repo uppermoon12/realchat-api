@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { findUser } from "../../function/auths.js";
+import { findUser } from "../function/auths.js";
 
 
 const token = (req, res, next) => {
