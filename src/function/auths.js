@@ -19,7 +19,7 @@ const findUser = async (username, password,ip,userAgent)=>{
                     username : user.username,
                     email : user.email,
                     img : imgUser.img,
-                    browser : alreadyLogin ? alreadyLogin.browser : userAgent ? userAgent : null,
+                    browser : alreadyLogin ? alreadyLogin.browser : null,
                     createdAt : user.createdAt
                 }
             }
@@ -30,6 +30,10 @@ const findUser = async (username, password,ip,userAgent)=>{
 const registerAccount = async (username, email, password)=>{
     const idUser = `user_` + Math.floor(Math.random() * 1000000);
     const hashPassword = await bcrypt.hash(password, 10)
+    await userInfo.create({
+        idUser : idUser,
+        username : username,
+    })
     await img.create().then((data)=>{
         auth.create({
             idUser,
