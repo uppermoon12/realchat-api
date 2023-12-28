@@ -7,8 +7,13 @@ const app = express();
 import profileRouter from "./src/routes/profile/index.js";
 import authRouter from "./src/routes/auth/index.js";
 
+const corsOptions = {
+    origin: ["http://localhost:3001"],
+    credentials: true,
+    exposedHeaders: ["set-cookie"]
+}
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.urlencoded({ extended: false }));

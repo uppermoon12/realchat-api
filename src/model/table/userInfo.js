@@ -11,17 +11,17 @@ const userInfo = db.define("userInfo", {
     },
     ip: {
         type : db.Sequelize.STRING,
-        allowNull : false
+        defaultValue : null 
     },
     browser: {
         type : db.Sequelize.STRING,
-        allowNull : false
+        defaultValue : null
     },
 },{
     timestamps : false
 })
 
-userInfo.sync().then(()=>{
+userInfo.sync({alter : true}).then(()=>{
     console.log("userInfo table created")
 })
 
