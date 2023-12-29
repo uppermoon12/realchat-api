@@ -33,7 +33,7 @@ import { mailOptions, transporter } from "../../middleware/email.js";
         maxAge : 1000 * 60 * 60 * 24 * 30
     })
     .status(200)
-    .json({message:"Login successful", data : user})
+    .json({message:"Login successful", data : {user,data}})
 }
         
     if(alreadyLogin.browser !== userAgent){
@@ -56,7 +56,11 @@ import { mailOptions, transporter } from "../../middleware/email.js";
         })
         .status(200).json({
             status : "success",
-            message:"you need to verify your account first"
+            message:"you need to verify your account first",
+            data : {
+                verifToken,
+                code
+            }
         })
         
     };
@@ -68,7 +72,7 @@ import { mailOptions, transporter } from "../../middleware/email.js";
         maxAge : 1000 * 60 * 60 * 24 * 30
     })
     .status(200)
-    .json({message:"Login successful", data : user})
+    .json({message:"Login successful", data : {user,token}})
 } catch (error) {
     return res.status(500).json({
         status : "error",
@@ -87,16 +91,16 @@ const verifLogin = async(req,res)=>{
     const verifToken = cookie.verifToken;
 
     if(!verifCode){
-        return res.status(400).json({message:"please login first!"})
+        return res.status(400).json({status: 'fail',message:"please login first!"})
     }
     jwt.verify(verifToken, process.env.SECRET_KEY, (err, decoded)=>{
         if(err){
-            return res.status(400).json({message:"please login first!"})
+            return res.status(400).json({status: 'fail',message:"please login first!"})
         }
         const code = decoded.code;
         const username = decoded.username;
         const password = decoded.password;
-        if(verifCode === code){
+        if(verifCode == code){
             const userAgent = req.headers['user-agent'];
             const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
             userInfo.update({
@@ -112,9 +116,13 @@ const verifLogin = async(req,res)=>{
                 sameSite : "none",
                 maxAge : 1000 * 60 * 60 * 24 * 30
             })
-            .status(200).json({message:"Login successful", data : user})
+            .status(200).json({status: 'success',message:"Login successful", 
+            data : {
+                user,
+                token
+            }})
         }
-        return res.status(400).json({message:"Verification code is wrong"})
+        return res.status(400).json({status : 'fail', message:"Verification code is wrong"})
     })
 
 }
