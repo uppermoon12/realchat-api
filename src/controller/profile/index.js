@@ -34,6 +34,14 @@ const rate = [
         id : 2,
         rate : 5
     },  
+    {
+        id : 2,
+        rate : 3.5
+    },
+    {
+        id : 2,
+        rate : 4
+    },
 ]
 const status = [
     {
@@ -80,19 +88,57 @@ const conversation = [
 
 
 const profile = async (req, res) => {
-    const newData =  user.map((result)=>{
-        const foto =  fotoUrl.find((item)=>item.id === result.id)
-        const rating = rate.find((item)=>item.id === result.id)
-        const statusUser = status.find((item)=>item.id === result.id)
+    const {u} = req.query;
+    const newData =  user.
+    filter((result)=>result.id == u).map((result)=>{
+        const foto = fotoUrl.find((item)=>item.id == result.id)
+        const statusUser = status.find((item)=>item.id == result.id)
+        const rating = rate.find((item)=>item.id == result.id)
+        const accumulatedRating = rate.filter((item)=>item.id == result.id)
+        let total = 0 
+        accumulatedRating.map((item)=>{
+            total += item.rate
+        })
+        const averageRating = total/accumulatedRating.length
         return {
-            name: result.name,
-            email: result.email,
+            name : result.name,
+            email : result.email,
+            foto : foto? foto.url : false,
             status : statusUser.status,
-            fotoUrl : foto ? foto.url : false,
-            rate : rating ? rating.rate : false
+            accumulatedRating : rating ? averageRating.toFixed(1) : '0'
         }
     })
-    return res.status(200).json(newData)
+    return res.status(200).json({
+        status: 'success',
+        message: 'success',
+        data: newData
+    })
+}
+
+const getAllProfileUser = async (req, res) => {
+    const newData = user.map((result)=>{
+        const foto = fotoUrl.find((item)=>item.id == result.id)
+        const statusUser = status.find((item)=>item.id == result.id)
+        const rating = rate.find((item)=>item.id == result.id)
+        const accumulatedRating = rate.filter((item)=>item.id == result.id)
+        let total = 0 
+        accumulatedRating.map((item)=>{
+            total += item.rate
+        })
+        const averageRating = total/accumulatedRating.length
+        return {
+            name : result.name,
+            email : result.email,
+            foto : foto? foto.url : false,
+            status : statusUser.status,
+            accumulatedRating : rating? averageRating.toFixed(1) : '0'
+        }
+    })
+    return res.status(200).json({
+        status:'success',
+        message:'success',
+        data: newData
+    })
 }
 
 const getConversation = async (req, res) => {
@@ -133,4 +179,5 @@ const getConversationAnotherVersion = async (req, res) => {
 }
 
 export { profile,
+    getAllProfileUser,
     getConversation }
