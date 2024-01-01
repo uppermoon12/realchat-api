@@ -1,3 +1,5 @@
+import moment from "moment-timezone";
+
 const user = [
     {
         id: 1,
@@ -62,25 +64,41 @@ const conversation = [
         idConversation : 1,
         message : 'hello',
         sender : 1,
-        receiver : 2
+        receiver : 2,
+        date : moment.tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss'),
     },
     {
         idConversation : 1,
         message : 'hello',
         sender : 2,
-        receiver : 1
+        receiver : 1,
+        date : moment.tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss'),
     },
     {
         idConversation : 2,
         message : 'lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum',
         sender : 3,
-        receiver : 1
+        receiver : 1,
+        date : moment.tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss'),
     },
     {
         idConversation : 2,
         message : 'hello',
         sender : 1,
-        receiver : 3
+        receiver : 3,
+        date : moment.tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss'),
+    },{
+        idConversation : 1,
+        message: 'lorem ipsum lorem ipsum lorem ipsum lorem ipsum lore lorem ipsum lorem ipsum',
+        sender : 1,
+        receiver : 2,
+        date : moment.tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss'),
+    },{
+        idConversation : 1,
+        message: 'lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem',
+        sender : 2,
+        receiver : 1,
+        date : moment.tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss'),
     }
 
 ]
@@ -131,7 +149,7 @@ const getAllProfileUser = async (req, res) => {
             email : result.email,
             foto : foto? foto.url : false,
             status : statusUser.status,
-            accumulatedRating : rating? averageRating.toFixed(1) : '0'
+            accumulatedRating : rating? averageRating.toFixed(1) : '0',
         }
     })
     return res.status(200).json({
@@ -154,18 +172,22 @@ const getConversation = async (req, res) => {
             sender : sender.name,
             receiver : receiver.name,
             foto : foto ? foto.url : false,
-            Status : statusUser.status
+            Status : statusUser.status,
+            date : result.date
+
         }
     })
     return res.status(200).json(newData)
 }
+
+
 
 const getConversationAnotherVersion = async (req, res) => {
     const {i} = req.query
 
     const userMap = Object.fromEntries(user.map(u => [u.id, u.name]));
     const fotoUrlMap = Object.fromEntries(fotoUrl.map(f => [f.id, f.url]));
-
+    const statusUser = Object.fromEntries(status.map(item=>[item.id, item.status]))
     const newData = conversation
         .filter(result => result.idConversation == i)
         .map(result => ({
@@ -173,6 +195,8 @@ const getConversationAnotherVersion = async (req, res) => {
             sender: userMap[result.sender],
             receiver: userMap[result.receiver],
             foto: fotoUrlMap[result.sender] || false,
+            status: statusUser[result.sender],
+            date: result.date
         }));
 
     return res.status(200).json(newData);
@@ -180,4 +204,5 @@ const getConversationAnotherVersion = async (req, res) => {
 
 export { profile,
     getAllProfileUser,
-    getConversation }
+    getConversation,
+    getConversationAnotherVersion}
