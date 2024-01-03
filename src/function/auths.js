@@ -11,7 +11,7 @@ const findUser = async (username, password,ip,userAgent)=>{
     if(user){
         const compare = await bcrypt.compare(password, user.password);
         const imgUser = await img.findOne({where : {id : user.imgId}})
-        const alreadyLogin = await userInfo.findOne({where : {username : username, ip : ip, browser : userAgent}})
+        const alreadyLogin = await userInfo.findOne({where : {username : username}})
             if(compare){
                 return {
                     id : user.id,

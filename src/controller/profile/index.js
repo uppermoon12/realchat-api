@@ -1,4 +1,5 @@
 import moment from "moment-timezone";
+import token from "../../middleware/indexx.js";
 
 const user = [
     {
@@ -15,6 +16,10 @@ const user = [
         id: 3,
         name: 'John Doe3',
         email: 'jonhdoe3@gmail.com'
+    },{
+        id: 4,
+        name: 'ler5',
+        email: 'ler5@gmail.com'
     }
 ]
 const fotoUrl = [
@@ -103,7 +108,7 @@ const conversation = [
 
 ]
 
-
+const friend = []
 
 const profile = async (req, res) => {
     const {u} = req.query;
@@ -202,7 +207,39 @@ const getConversationAnotherVersion = async (req, res) => {
     return res.status(200).json(newData);
 }
 
-export { profile,
+const addFriend = async(req,res) =>{
+    const {u} = req.query
+    await token(req,res)
+    const username = req.username
+    const findUsername = user.filter(result => result.name == username)
+    .map(result => ({
+        id : result.id,
+        username : result.name,
+    }))
+    const findUser = user.map((result)=> {
+        if(u == result.id){
+            const newData = {
+                userId : findUsername[0].id,
+                username : findUsername[0].username,
+                id : result.id,
+                name : result.name,
+                email : result.email,
+                friend : true
+            }
+            return friend.push(newData);
+        }
+    })
+    return res.status(200).json({
+        status:'success',
+        message:'success',
+        data: friend
+    })
+}
+
+export { 
+    profile,
     getAllProfileUser,
     getConversation,
-    getConversationAnotherVersion}
+    getConversationAnotherVersion,
+    addFriend,
+}

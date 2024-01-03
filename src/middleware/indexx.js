@@ -1,18 +1,15 @@
 import jwt from "jsonwebtoken";
-import { findUser } from "../function/auths.js";
 
 
-const token = (req, res, next) => {
-    const token = req.cookies.token;
-    if(!token){
-        return res.status(401).json({message:"You are not authorized"})
-    }
+const token = async (req, res, next) => {
+    let token = req.cookies.token;
     try {
-        const decoded = jwt.verify(token, process.env.SECRET_KEY);
-        username = decoded.username;
-        next();
+        jwt.verify(token, process.env.SECRET_KEY,async (err,decoded)=>{
+           req.username = decoded.username;
+            next
+        });
     } catch (error) {
-        return res.status(401).json({message:"You are not authorized"})
+        console.log(error);
     }
 }
 

@@ -93,7 +93,7 @@ const verifLogin = async(req,res)=>{
     if(!verifCode){
         return res.status(400).json({status: 'fail',message:"please login first!"})
     }
-    jwt.verify(verifToken, process.env.SECRET_KEY, (err, decoded)=>{
+    jwt.verify(verifToken, process.env.SECRET_KEY, async (err, decoded)=>{
         if(err){
             return res.status(400).json({status: 'fail',message:"please login first!"})
         }
@@ -108,7 +108,7 @@ const verifLogin = async(req,res)=>{
                 browser : userAgent
             },{where : {username : username}
             })
-            const user = (username, password);
+            const user = await findUser(username, password);
             const token = jwt.sign({username : user.username}, process.env.SECRET_KEY, {expiresIn : "30d"})
             return res.cookie("token", token,{
                 httpOnly : true,
