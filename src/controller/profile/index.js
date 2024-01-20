@@ -207,33 +207,70 @@ const getConversationAnotherVersion = async (req, res) => {
     return res.status(200).json(newData);
 }
 
-const addFriend = async(req,res) =>{
-    const {u} = req.query
-    await token(req,res)
-    const username = req.username
-    const findUsername = user.filter(result => result.name == username)
-    .map(result => ({
-        id : result.id,
-        username : result.name,
-    }))
-    const findUser = user.map((result)=> {
-        if(u == result.id){
-            const newData = {
-                userId : findUsername[0].id,
-                username : findUsername[0].username,
-                id : result.id,
-                name : result.name,
-                email : result.email,
-                friend : true
-            }
-            return friend.push(newData);
+const addFriend = async (req, res) => {
+    try {
+        await token(req, res);
+
+        const { u } = req.query;
+        const username = req.username;
+
+        const findUsername = user.find(result => result.name === username);
+        if (!findUsername) {
+            return res.status(404).json({
+                code: 402,
+                status: 'Not found',
+                message: 'Username not found',
+            });
         }
-    })
+
+        const findUser = user.find(result => u == result.id);
+        if (!findUser) {
+            return res.status(404).json({
+                code: 402,
+                status: 'Not Found',
+                message: 'User not found',
+            });
+        }
+
+        const newData = {
+            userId: findUsername.id,
+            username: findUsername.name,
+            id: findUser.id,
+            name: findUser.name,
+            email: findUser.email,
+            friend: true
+        };
+
+        friend.push(newData);
+
+        return res.status(200).json({
+            status: 'success',
+            message: 'Friend added successfully',
+            data: friend
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            status: 'error',
+            message: 'Internal Server Error',
+            data: null
+        });
+    }
+};
+
+
+const getFriend = async (req, res) => {
+    await token(req, res);
+
+    const user = req.username
+
+    const friends = friend.filter(result => result.username === user);
     return res.status(200).json({
         status:'success',
         message:'success',
-        data: friend
+        data: friends
     })
+    
 }
 
 export { 
@@ -242,4 +279,5 @@ export {
     getConversation,
     getConversationAnotherVersion,
     addFriend,
+    getFriend,
 }
